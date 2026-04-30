@@ -6,24 +6,6 @@ A transfer-learning based image classification system for identifying aquatic ma
 
 Develop an automated classification system capable of accurately identifying 16 different aquatic macro-invertebrate species from image data using transfer learning with pre-trained deep learning models.
 
-## Features
-
-- **Transfer Learning Pipeline**: Leverages MobileNetV2 pre-trained on ImageNet for efficient classification
-- **Multi-class Classification**: Supports 16 aquatic macro-invertebrate species
-- **Flexible Data Handling**: Automatic dataset loading and train/validation splitting
-- **TensorFlow/Keras Integration**: Modern deep learning framework with straightforward API
-- **Modular Service Architecture**: Clean separation between model logic and utilities
-
-## Packages Used
-
-- **TensorFlow** (2.x) - Deep learning framework
-- **Keras** - High-level neural networks API
-- **NumPy** - Numerical computing
-- **Pandas** - Data manipulation and analysis
-- **Pillow** - Image processing
-- **Matplotlib** - Data visualization
-- **Scikit-learn** - Machine learning utilities
-
 ## Installation
 
 ### Prerequisites
@@ -93,12 +75,6 @@ Develop an automated classification system capable of accurately identifying 16 
 python -m src.main
 ```
 
-### GUI Application (To Be Implemented)
-
-```bash
-python -m src.gui.app
-```
-
 ## Folder Structure
 
 ```
@@ -108,23 +84,6 @@ macro_project/
 │
 ├── data/                     # Dataset directory
 │   ├── raw/                  # Original species images
-│   │   ├── Asellus sp/
-│   │   ├── Baetidae sp/
-│   │   ├── Elmis sp/
-│   │   ├── Ephemerellidae/
-│   │   ├── Erpobdella sp/
-│   │   ├── Gammarus sp/
-│   │   ├── Hydropsychidae sp/
-│   │   ├── Leptophlebiidae sp/
-│   │   ├── Leuctra sp/
-│   │   ├── Limnius sp/
-│   │   ├── Lymnea sp/
-│   │   ├── Nemoura sp/
-│   │   ├── Oligochaeta sp/
-│   │   ├── Sericostomatidae sp/
-│   │   ├── Sialis sp/
-│   │   ├── Simuliidae sp/
-│   │   └── Sphaerium sp/
 │   └── processed/            # Preprocessed datasets
 │
 ├── outputs/                  # Generated outputs
@@ -140,37 +99,12 @@ macro_project/
     └── utils/                # Utility functions (future)
 ```
 
-## Model Architecture
-
-The classifier uses **MobileNetV2** (pre-trained on ImageNet) with:
-- **Input**: 224×224 RGB images
-- **Base Model**: MobileNetV2 with frozen weights
-- **Custom Layers**:
-  - Global Average Pooling
-  - Dense(128, ReLU)
-  - Dense(16, Softmax) for 16-class output
-- **Batch Size**: 32
-- **Optimizer**: Adam
-- **Loss**: Sparse Categorical Crossentropy
-
 ## Group Members
-
-- u3294093 (Author)
+- u3294093
 - u3281627
 - u3271260
-
-## Assessment Information
-
-- **Assessment**: 3
-- **Date**: 28/04/2024
 
 ## Notes
 
 - Python 3.12 or older is required for TensorFlow compatibility
-- Ensure all images are in subdirectories matching species names
-- Training datasets are automatically split 80/20 for training/validation
-- Model training output includes accuracy metrics and loss curves
-
-## License
-
-Group Assignment - Software Technology 1
+- 
