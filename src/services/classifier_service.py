@@ -107,6 +107,9 @@ NOTE: Code is adapted from the Assignment 3 Full Guidance,
 with some modifications to better fit the needs of this project.
 """
 
+"""
+This is for testing and will be removed with the addition of main.py
+"""
 if __name__ == "__main__":
     print("\n--- Classifier Service Test ---\n")
     
