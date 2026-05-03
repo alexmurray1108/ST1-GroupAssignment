@@ -1,3 +1,13 @@
+"""
+*******************************
+Assessment: 3
+Author: u3281627
+Group Members: u3294093, u3271260
+Date: 28/04/2026 (30/04/2026)
+Group Assignment
+*******************************
+"""
+
 from pathlib import Path
 
 #Base directory
