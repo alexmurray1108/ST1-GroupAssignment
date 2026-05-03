@@ -8,6 +8,12 @@ Group Assignment
 *******************************
 """
 
+import sys
+from pathlib import Path
+
+# Enable direct script execution by adding project root to path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
 from src.services.workflow_service import WorkflowService
 
 def main() -> None:
