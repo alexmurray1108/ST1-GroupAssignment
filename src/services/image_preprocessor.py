@@ -12,18 +12,18 @@ import cv2
 import numpy as np
 
 
- class ImagePreprocessor:
- 	def __init__(self, image_size=(128, 128)):
-     	self.image_size = image_size
+class ImagePreprocessor:
+    def __init__(self, image_size=(128, 128)):
+        self.image_size = image_size
 
- 	def transform(self, file_path):
-     	image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
+    def transform(self, file_path):
+        image = cv2.imread(file_path, cv2.IMREAD_GRAYSCALE)
 
-     	if image is None:
-         	raise ValueError(f"Could not load image: {file_path}")
+        if image is None:
+            raise ValueError(f"Could not load image: {file_path}")
 
-     	resized = cv2.resize(image, self.image_size)
-     	normalized = resized.astype("float32") / 255.0
-     	flattened = normalized.flatten()
+        resized = cv2.resize(image, self.image_size)
+        normalized = resized.astype("float32") / 255.0
+        flattened = normalized.flatten()
 
-     	return flattened
+        return flattened
