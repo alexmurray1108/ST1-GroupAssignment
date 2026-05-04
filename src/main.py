@@ -21,6 +21,7 @@ def main() -> None:
     workflow = WorkflowService()
     workflow.show_summary()
     workflow.generate_eda()
+    workflow.train_classifier()
 
 
 if __name__ == "__main__":
