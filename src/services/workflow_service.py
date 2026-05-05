@@ -14,7 +14,7 @@ with some modifications to better fit the needs of this project.
 from pathlib import Path
 import pandas as pd
 
-from src.config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
+from config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
 from src.services.dataset_indexer import DatasetIndexer
 from src.services.classifier_service import ClassifierService
 from src.services.eda_service import EDAService, save_sample_grid
