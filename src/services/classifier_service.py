@@ -10,9 +10,11 @@ This module implements a small
 transfer-learning wrapper around 
 TensorFlow / Keras.
 
-NOTE: This model requires Python 
-3.12 or older to match the 
-project's TensorFlow compatibility.
+NOTE: This model requires Python 3.12 or older 
+to match the project's TensorFlow compatibility.
+
+NOTE: Code is adapted from the Assignment 3 Full Guidance, 
+with some modifications to better fit the needs of this project.
 ***********************************
 """
 
@@ -150,11 +152,6 @@ class TransferLearningService:
         print(f"[SAVE] Model saved successfully to {model_path}")
         
         return str(model_path)
-
-"""
-NOTE: Code is adapted from the Assignment 3 Full Guidance, 
-with some modifications to better fit the needs of this project.
-"""
 
 
 """

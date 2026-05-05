@@ -9,13 +9,12 @@ Group Assignment
 This module preprocesses macroinvertebrate images for Stage 2
 classification. It converts each raw image into a consistent numeric
 feature vector that can be used by the classifier service.
+
+NOTE: Code is adapted from the Assignment 3 Full Guidance, 
+with some modifications to better fit the needs of this project.
 ***********************************
 """
 
-"""
-NOTE: Code is adapted from the Assignment 3 Full Guidance, 
-with some modifications to better fit the needs of this project.
-"""
 from pathlib import Path
 from typing import Iterable
 
@@ -118,4 +117,3 @@ if __name__ == "__main__":
         print("Preprocessing test completed successfully.")
 
     print(" Test Finished ")
-
