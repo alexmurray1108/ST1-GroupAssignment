@@ -16,9 +16,9 @@ import pandas as pd
 
 from src.config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
 from src.services.dataset_indexer import DatasetIndexer
-from src.services.classifier_service import TransferLearningService
+from src.services.classifier_service import ClassifierService
 from src.services.eda_service import EDAService, save_sample_grid
-from src.services.image_preprocessor import ImagePreprocessor
+from src.services.Image_processor import ImagePreprocessor
 import numpy as np
 
 class WorkflowService:
@@ -54,8 +54,8 @@ class WorkflowService:
         save_sample_grid(df, EDA_OUTPUT_DIR / "sample_grid.png")
 
     def preprocess_images(self) -> tuple[str, str] | None:
-        """Preprocess raw images and save features/labels to data/processed.
-
+        """
+        Preprocess raw images and save features/labels to data/processed.
         Returns a tuple of (features_path, labels_path) or None if no images.
         """
         preprocessor = ImagePreprocessor(image_size=IMAGE_SIZE)
@@ -76,14 +76,21 @@ class WorkflowService:
         print(f"[PREPROCESS] Saved {len(raw_files)} feature vectors to {processed_dir}")
         return str(features_path), str(labels_path)
 
-    def train_classifier(self, epochs: int = 2, validation_split: float = 0.2) -> str:
+    def train_classifier(self) -> str:
         """
-        Train and save the transfer-learning classifier.
-
-        Note: run `preprocess_images()` separately before calling this if you want saved features.
+        Train and save the classifier model using the indexed dataset.
         """
-        service = TransferLearningService(image_size=(224, 224), batch_size=32)
-        train_ds, val_ds = service.build_datasets(RAW_DATA_DIR, validation_split=validation_split)
-        service.build_model()
-        service.train_model(train_ds, val_ds, epochs=epochs)
-        return service.save_model(MODEL_OUTPUT_DIR)
+        print("[TRAIN_CLASSIFIER] Starting classifier training workflow")
+        df = self.load_dataframe()
+        print(f"[TRAIN_CLASSIFIER] Loaded dataframe with {len(df)} samples")
+        
+        preprocessor = ImagePreprocessor(image_size=IMAGE_SIZE)
+        service = ClassifierService(preprocessor, MODEL_OUTPUT_DIR)
+        
+        print(f"[TRAIN_CLASSIFIER] Training classifier...")
+        results = service.train(df)
+        print(f"[TRAIN_CLASSIFIER] Model accuracy: {results['accuracy']:.4f}")
+        
+        model_path = service.save_model()
+        print(f"[TRAIN_CLASSIFIER] Classifier training completed")
+        return str(model_path)
