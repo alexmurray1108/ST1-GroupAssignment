@@ -156,8 +156,10 @@ NOTE: Code is adapted from the Assignment 3 Full Guidance,
 with some modifications to better fit the needs of this project.
 """
 
+
 """
-This is for testing and will be removed with the addition of main.py
+The Below code is for testing but also allowes this module to run on its own seperatly from the main.
+This means that if something else doesn't work, I can show that this part still works as intended.
 """
 if __name__ == "__main__":
     print("\n--- Classifier Service Test ---\n")
