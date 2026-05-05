@@ -8,6 +8,10 @@ Group Assignment
 *******************************
 """
 
+"""
+NOTE: Code is adapted from the Assignment 3 Full Guidance, 
+with some modifications to better fit the needs of this project.
+"""
 from pathlib import Path
 import pandas as pd
 
@@ -19,7 +23,9 @@ from src.services.image_preprocessor import ImagePreprocessor
 import numpy as np
 
 class WorkflowService:
-    """Workflow for Stage 1: indexing, summary, and EDA generation"""
+    """
+    Workflow for Stage 1: indexing, summary, and EDA generation
+    """
 
     def __init__(self) -> None:
         EDA_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -72,7 +78,8 @@ class WorkflowService:
         return str(features_path), str(labels_path)
 
     def train_classifier(self, epochs: int = 2, validation_split: float = 0.2) -> str:
-        """Train and save the transfer-learning classifier.
+        """
+        Train and save the transfer-learning classifier.
 
         Note: run `preprocess_images()` separately before calling this if you want saved features.
         """
