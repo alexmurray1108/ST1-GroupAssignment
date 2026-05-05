@@ -12,6 +12,10 @@ feature vector that can be used by the classifier service.
 ***********************************
 """
 
+"""
+NOTE: Code is adapted from the Assignment 3 Full Guidance, 
+with some modifications to better fit the needs of this project.
+"""
 from pathlib import Path
 from typing import Iterable
 
@@ -53,7 +57,9 @@ class ImagePreprocessor:
         return flattened
 
     def batch_transform(self, file_paths: Iterable[str | Path]) -> np.ndarray:
-        """Preprocess multiple images and return them as a feature matrix."""
+        """
+        Preprocess multiple images and return them as a feature matrix.
+        """
         features = []
 
         for file_path in file_paths:
