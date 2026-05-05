@@ -15,10 +15,10 @@ from pathlib import Path
 import pandas as pd
 
 from config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
-from src.services.dataset_indexer import DatasetIndexer
-from src.services.classifier_service import ClassifierService
-from src.services.eda_service import EDAService, save_sample_grid
-from src.services.Image_processor import ImagePreprocessor
+from services.dataset_indexer import DatasetIndexer
+from services.classifier_service import ClassifierService
+from services.eda_service import EDAService, save_sample_grid
+from services.Image_processor import ImagePreprocessor
 import numpy as np
 
 class WorkflowService:
