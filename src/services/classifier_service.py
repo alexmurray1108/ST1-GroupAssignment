@@ -6,186 +6,152 @@ Group Members: u3281627, u3271260
 Date: 28/04/2026
 Group Assignment
 
-This module implements a small 
-transfer-learning wrapper around 
-TensorFlow / Keras.
-
-NOTE: This model requires Python 3.12 or older 
-to match the project's TensorFlow compatibility.
-
-NOTE: Code is adapted from the Assignment 3 Full Guidance, 
+NOTE: Code is adapted from the Assignment 3 Full Guidance,
 with some modifications to better fit the needs of this project.
 ***********************************
 """
 
 from pathlib import Path
 
-import tensorflow as tf
-from tensorflow import keras
+import joblib
+import numpy as np
+import pandas as pd
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.model_selection import train_test_split
 
 
-class TransferLearningService:
-    """
-    Wrap a transfer-learning workflow for an optional advanced classifier.
-    """
-    def __init__(
-        self,
-        image_size: tuple[int, int] = (224, 224),
-        batch_size: int = 32
-    ) -> None:
-        print(f"[INIT] Initializing TransferLearningService with image_size={image_size}, batch_size={batch_size}")
-        self.image_size = image_size
-        self.batch_size = batch_size
-        self.model = None
-        self.class_count = None
-        print("[INIT] TransferLearningService initialized successfully")
+class ClassifierService:
+    """Train, evaluate, and persist the baseline classification model."""
 
-    def build_datasets(
-        self,
-        train_dir: Path | str,
-        validation_split: float = 0.2,
-    ):
-        """
-        Create training and validation datasets from a class-folder structure.
-        """
-        print(f"[BUILD_DATASETS] Loading datasets from {train_dir} with validation_split={validation_split}")
-        train_ds = keras.utils.image_dataset_from_directory(
-            train_dir,
-            validation_split=validation_split,
-            subset="training",
-            seed=42,
-            image_size=self.image_size,
-            batch_size=self.batch_size
-        )
-        print(f"[BUILD_DATASETS] Training dataset created successfully")
-
-        val_ds = keras.utils.image_dataset_from_directory(
-            train_dir,
-            validation_split=validation_split,
-            subset="validation",
-            seed=42,
-            image_size=self.image_size,
-            batch_size=self.batch_size
-        )
-        print(f"[BUILD_DATASETS] Validation dataset created successfully")
-
-        # Store class count from dataset
-        self.class_count = len(train_ds.class_names)
-        print(f"[BUILD_DATASETS] Detected {self.class_count} classes: {train_ds.class_names}")
-
-        return train_ds, val_ds
-
-    def build_model(self, class_count: int = None) -> keras.Model:
-        """
-        Build and compile the transfer-learning model.
-        If class_count is not provided, uses the count from the last loaded dataset.
-        """
-        if class_count is None:
-            if self.class_count is None:
-                raise ValueError("class_count must be provided or build_datasets() must be called first")
-            class_count = self.class_count
-        else:
-            self.class_count = class_count
+    def __init__(self, preprocessor, model_output_dir: Path) -> None:
+        print(f"[INIT] Initializing ClassifierService")
+        print(f"[INIT] Model output directory: {model_output_dir}")
+        self.preprocessor = preprocessor
+        self.model_output_dir = Path(model_output_dir)
         
-        print(f"[BUILD_MODEL] Building transfer learning model for {class_count} classes")
-        print(f"[BUILD_MODEL] Loading MobileNetV2 base model with ImageNet weights...")
-        base_model = keras.applications.MobileNetV2(
-            input_shape=self.image_size + (3,),
-            include_top=False,
-            weights="imagenet"
+        print(f"[INIT] Creating RandomForestClassifier with 200 estimators")
+        self.model = RandomForestClassifier(
+            n_estimators=200,
+            random_state=42,
+            n_jobs=-1
         )
-        print(f"[BUILD_MODEL] Base model loaded successfully")
+        print(f"[INIT] ClassifierService initialized successfully")
 
-        base_model.trainable = False
-        print(f"[BUILD_MODEL] Base model layers frozen")
+    def prepare_features(self, dataframe: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
+        """Convert indexed file paths into model features and labels."""
+        print(f"[PREPARE_FEATURES] Starting feature preparation for {len(dataframe)} samples")
+        features = []
+        labels = []
 
-        self.model = keras.Sequential([
-            keras.layers.Rescaling(1.0 / 255),
-            base_model,
-            keras.layers.GlobalAveragePooling2D(),
-            keras.layers.Dense(128, activation="relu"),
-            keras.layers.Dense(class_count, activation="softmax"),
-        ])
-        print(f"[BUILD_MODEL] Sequential model architecture created")
+        for idx, row in dataframe.iterrows():
+            if (idx + 1) % max(1, len(dataframe) // 10) == 0:
+                print(f"[PREPARE_FEATURES] Processed {idx + 1}/{len(dataframe)} samples")
+            features.append(self.preprocessor.transform(row["file_path"]))
+            labels.append(row["label"])
 
-        self.model.compile(
-            optimizer="adam",
-            loss="sparse_categorical_crossentropy",
-            metrics=["accuracy"]
+        features_array = np.array(features)
+        labels_array = np.array(labels)
+        print(f"[PREPARE_FEATURES] Feature preparation completed")
+        print(f"[PREPARE_FEATURES] Features shape: {features_array.shape}, Labels shape: {labels_array.shape}")
+        
+        return features_array, labels_array
+
+    def train(self, dataframe: pd.DataFrame) -> dict[str, object]:
+        """Fit the model and return evaluation outputs."""
+        print(f"[TRAIN] Starting model training workflow")
+        
+        print(f"[TRAIN] Preparing features...")
+        X, y = self.prepare_features(dataframe)
+        
+        print(f"[TRAIN] Splitting data with test_size=0.2, stratified")
+        X_train, X_test, y_train, y_test = train_test_split(
+            X,
+            y,
+            test_size=0.2,
+            random_state=42,
+            stratify=y
         )
-        print(f"[BUILD_MODEL] Model compiled successfully")
+        print(f"[TRAIN] Training set size: {X_train.shape[0]}, Test set size: {X_test.shape[0]}")
 
-        return self.model
+        print(f"[TRAIN] Fitting RandomForestClassifier with 200 trees...")
+        self.model.fit(X_train, y_train)
+        print(f"[TRAIN] Model fitting completed successfully")
+        
+        print(f"[TRAIN] Generating predictions on test set...")
+        predictions = self.model.predict(X_test)
+        print(f"[TRAIN] Predictions generated")
 
-    def train_model(
-        self,
-        train_ds,
-        val_ds,
-        epochs: int = 10
-    ):
-        """
-        Train the model on the provided datasets.
-        """
-        print(f"[TRAIN] Starting model training for {epochs} epochs")
-        history = self.model.fit(
-            train_ds,
-            validation_data=val_ds,
-            epochs=epochs,
-            verbose=1
-        )
-        print(f"[TRAIN] Model training completed successfully")
-        return history
+        accuracy = accuracy_score(y_test, predictions)
+        report = classification_report(y_test, predictions)
+        conf_matrix = confusion_matrix(y_test, predictions)
+        
+        print(f"[TRAIN] Model accuracy: {accuracy:.4f}")
+        print(f"[TRAIN] Classification report:\n{report}")
+        
+        results = {
+            "accuracy": accuracy,
+            "report": report,
+            "confusion_matrix": conf_matrix,
+        }
+        
+        print(f"[TRAIN] Training workflow completed successfully")
+        return results
 
-    def save_model(self, output_dir: Path | str = "outputs/models") -> str:
-        """
-        Save the trained model to disk.
-        """
-        if self.model is None:
-            raise ValueError("No model to save. Build a model first using build_model()")
+    def save_model(self, file_name: str = "macro_classifier.joblib") -> Path:
+        """Save the trained model to disk."""
+        print(f"[SAVE] Creating output directory if needed...")
+        self.model_output_dir.mkdir(parents=True, exist_ok=True)
         
-        output_dir = Path(output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
+        output_path = self.model_output_dir / file_name
+        print(f"[SAVE] Saving model to {output_path}")
+        joblib.dump(self.model, output_path)
+        print(f"[SAVE] Model saved successfully to {output_path}")
         
-        model_path = output_dir / "transfer_learning_model.keras"
-        print(f"[SAVE] Saving model to {model_path}")
-        self.model.save(str(model_path))
-        print(f"[SAVE] Model saved successfully to {model_path}")
-        
-        return str(model_path)
+        return output_path
 
 
 """
-The Below code is for testing but also allowes this module to run on its own seperatly from the main.
+The Below code is for testing but also allows this module to run on its own separately from main.
 This means that if something else doesn't work, I can show that this part still works as intended.
 """
 if __name__ == "__main__":
     print("\n--- Classifier Service Test ---\n")
     
-    # Initialize the service
-    service = TransferLearningService(image_size=(224, 224), batch_size=32)
+    # Create a simple mock preprocessor for testing
+    class MockPreprocessor:
+        def transform(self, file_path):
+            # Return random features for testing
+            return np.random.randn(100)
     
-    # Try to load datasets if data exists
-    print("\nTesting dataset loading...")
-    data_dir = Path("data/raw")
-    if data_dir.exists():
-        try:
-            train_ds, val_ds = service.build_datasets(data_dir, validation_split=0.2)
-            
-            # Build model (class count is automatically determined from dataset)
-            print("\nBuilding model...")
-            model = service.build_model()
-            
-            # Train the model
-            print("\nTraining model...")
-            history = service.train_model(train_ds, val_ds, epochs=2)
-            
-            # Save the trained model
-            print("\nSaving model...")
-            model_path = service.save_model()
-            print(f"Model saved to: {model_path}")
-        except Exception as e:
-            print(f"Error during training/saving: {type(e).__name__}: {e}")
-    else:
-        print(f"Data directory not found")
+    # Initialize the service
+    output_dir = Path("outputs/models")
+    preprocessor = MockPreprocessor()
+    service = ClassifierService(preprocessor, output_dir)
+    
+    # Create mock dataframe for testing
+    print("\nCreating mock training data...")
+    mock_data = {
+        "file_path": [f"data/raw/Species_{i}.jpg" for i in range(50)],
+        "label": [f"species_{i % 5}" for i in range(50)]
+    }
+    df = pd.DataFrame(mock_data)
+    print(f"Mock dataset created with {len(df)} samples")
+    
+    # Train the model
+    print("\nTraining model...")
+    try:
+        results = service.train(df)
+        print(f"\nResults:")
+        print(f"  Accuracy: {results['accuracy']:.4f}")
+        print(f"\nClassification Report:\n{results['report']}")
+        
+        # Save the trained model
+        print("\nSaving model...")
+        model_path = service.save_model()
+        print(f"Model saved to: {model_path}")
+    except Exception as e:
+        print(f"Error during training/saving: {type(e).__name__}: {e}")
     
     print("\n--- All tests completed ---\n")
