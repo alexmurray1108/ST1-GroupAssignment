@@ -11,10 +11,12 @@ Group Assignment
 from pathlib import Path
 import pandas as pd
 
-from src.config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR
+from src.config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
 from src.services.dataset_indexer import DatasetIndexer
 from src.services.classifier_service import TransferLearningService
 from src.services.eda_service import EDAService, save_sample_grid
+from src.services.image_preprocessor import ImagePreprocessor
+import numpy as np
 
 class WorkflowService:
     """Workflow for Stage 1: indexing, summary, and EDA generation"""
@@ -46,8 +48,34 @@ class WorkflowService:
         eda.save_image_size_distribution()
         save_sample_grid(df, EDA_OUTPUT_DIR / "sample_grid.png")
 
+    def preprocess_images(self) -> tuple[str, str] | None:
+        """Preprocess raw images and save features/labels to data/processed.
+
+        Returns a tuple of (features_path, labels_path) or None if no images.
+        """
+        preprocessor = ImagePreprocessor(image_size=IMAGE_SIZE)
+        raw_files = [p for p in RAW_DATA_DIR.rglob("*") if p.suffix.lower() in SUPPORTED_EXTENSIONS]
+
+        if not raw_files:
+            print("[PREPROCESS] No raw images found to preprocess")
+            return None
+
+        features = preprocessor.batch_transform(raw_files)
+        labels = [p.parent.name for p in raw_files]
+        processed_dir = RAW_DATA_DIR.parent / "processed"
+        processed_dir.mkdir(parents=True, exist_ok=True)
+        features_path = processed_dir / "features.npy"
+        labels_path = processed_dir / "labels.npy"
+        np.save(features_path, features)
+        np.save(labels_path, np.array(labels))
+        print(f"[PREPROCESS] Saved {len(raw_files)} feature vectors to {processed_dir}")
+        return str(features_path), str(labels_path)
+
     def train_classifier(self, epochs: int = 2, validation_split: float = 0.2) -> str:
-        """Train and save the transfer-learning classifier."""
+        """Train and save the transfer-learning classifier.
+
+        Note: run `preprocess_images()` separately before calling this if you want saved features.
+        """
         service = TransferLearningService(image_size=(224, 224), batch_size=32)
         train_ds, val_ds = service.build_datasets(RAW_DATA_DIR, validation_split=validation_split)
         service.build_model()

@@ -21,6 +21,8 @@ def main() -> None:
     workflow = WorkflowService()
     workflow.show_summary()
     workflow.generate_eda()
+    """Run Stage 2"""
+    workflow.preprocess_images()
     workflow.train_classifier()
 
 
