@@ -14,11 +14,11 @@ with some modifications to better fit the needs of this project.
 from pathlib import Path
 import pandas as pd
 
-from src.config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
-from src.services.dataset_indexer import DatasetIndexer
-from src.services.classifier_service import ClassifierService
-from src.services.eda_service import EDAService, save_sample_grid
-from src.services.Image_processor import ImagePreprocessor
+from config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
+from services.dataset_indexer import DatasetIndexer
+from services.classifier_service import ClassifierService
+from services.eda_service import EDAService, save_sample_grid
+from services.Image_processor import ImagePreprocessor
 import numpy as np
 
 class WorkflowService:
@@ -52,6 +52,7 @@ class WorkflowService:
         eda.save_class_distribution()
         eda.save_image_size_distribution()
         save_sample_grid(df, EDA_OUTPUT_DIR / "sample_grid.png")
+        print("EDA outputs generated successfully.")
 
     def preprocess_images(self) -> tuple[str, str] | None:
         """

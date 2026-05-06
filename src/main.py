@@ -17,7 +17,8 @@ from pathlib import Path
 # Enable direct script execution by adding project root to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from src.services.workflow_service import WorkflowService
+from services.workflow_service import WorkflowService
+from console_app import ConsoleApp
 
 def main() -> None:
     """Run Stage 1"""
@@ -27,6 +28,10 @@ def main() -> None:
     """Run Stage 2"""
     workflow.preprocess_images()
     workflow.train_classifier()
+    """Run GUI"""
+    workflow_service = WorkflowService()
+    app = ConsoleApp(workflow_service)
+    app.run()
 
 
 if __name__ == "__main__":

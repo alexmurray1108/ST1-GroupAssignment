@@ -15,7 +15,7 @@ from pathlib import Path
 import cv2
 import pandas as pd
 
-from src.config import RAW_DATA_DIR, SUPPORTED_EXTENSIONS
+from config import RAW_DATA_DIR, SUPPORTED_EXTENSIONS
 
 class DatasetIndexer:
     """Scan selected folder and build DataFrame of image metadata"""
