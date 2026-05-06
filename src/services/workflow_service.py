@@ -52,6 +52,7 @@ class WorkflowService:
         eda.save_class_distribution()
         eda.save_image_size_distribution()
         save_sample_grid(df, EDA_OUTPUT_DIR / "sample_grid.png")
+        print("EDA outputs generated successfully.")
 
     def preprocess_images(self) -> tuple[str, str] | None:
         """
