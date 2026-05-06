@@ -26,7 +26,7 @@ class ConsoleApp:
         """
 
         while True:
-            print("\Macoinvertebrate Image Analysis & Processing System")
+            print("\nMacoinvertebrate Image Analysis & Processing System")
             print("1. Show dataset summary")
             print("2. Generate EDA outputs")
             print("3. Train the baseline classifier")
