@@ -43,7 +43,12 @@ class ConsoleApp:
                 self.workflow_service.train_classifier()
             elif choice == "4":
                 image_path = input ("Enter image path: ").strip()
-                self.workflow_service.predict_image(image_path)
+                try:
+                    self.workflow_service.predict_image(image_path)
+                except FileNotFoundError as error:
+                    print("Incorrect file path, please try again.")
+                except ValueError as error:
+                    print("Error, please try again.")
             elif choice == "5":
                 print("Exiting application")
                 break
