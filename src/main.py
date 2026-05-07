@@ -21,13 +21,6 @@ from services.workflow_service import WorkflowService
 from console_app import ConsoleApp
 
 def main() -> None:
-    """Run Stage 1"""
-    workflow = WorkflowService()
-    workflow.show_summary()
-    workflow.generate_eda()
-    """Run Stage 2"""
-    workflow.preprocess_images()
-    workflow.train_classifier()
     """Run GUI"""
     workflow_service = WorkflowService()
     app = ConsoleApp(workflow_service)

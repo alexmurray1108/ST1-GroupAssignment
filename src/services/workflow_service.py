@@ -13,6 +13,7 @@ with some modifications to better fit the needs of this project.
 
 from pathlib import Path
 import pandas as pd
+import joblib
 
 from config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
 from services.dataset_indexer import DatasetIndexer
@@ -95,3 +96,23 @@ class WorkflowService:
         model_path = service.save_model()
         print(f"[TRAIN_CLASSIFIER] Classifier training completed")
         return str(model_path)
+
+    def predict_image(self, image_path: str) -> str:
+        """
+        Predict the macroinvertebrate class for a single image path.
+        """
+        model_path = MODEL_OUTPUT_DIR / "macro_classifier.joblib"
+
+        if not model_path.exists():
+            raise FileNotFoundError(
+                f"Trained model not found at {model_path}. Please run option 3 first."
+            )
+
+        preprocessor = ImagePreprocessor(image_size=IMAGE_SIZE)
+        model = joblib.load(model_path)
+
+        features = preprocessor.transform(image_path)
+        prediction = model.predict([features])[0]
+
+        print(f"Predicted class: {prediction}")
+        return str(prediction)
