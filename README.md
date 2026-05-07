@@ -114,12 +114,15 @@ macro_project/
 │   │   ├── Elmis sp/
 │   │   └── ... (species folders)
 │   └── processed/
-│       ├── features.npy
-│       └── labels.npy
+│       ├── features.npy (Created by Program)
+│       └── labels.npy (Created by Program)
 ├── outputs/
 │   ├── eda/
+│   │   ├── class_distribution.png (Created by Program)
+│   │   ├── image_size_distribution.png (Created by Program)
+│   │   └── sample_grid.png (Created by Program)
 │   ├── models/
-│   │   └── macro_classifier.joblib
+│   │   └── macro_classifier.joblib (Created by Program)
 │   └── reports/
 └── src/
     ├── config.py
