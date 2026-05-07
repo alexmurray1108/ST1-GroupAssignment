@@ -102,6 +102,10 @@ Note: this codebase does not include a separate Tkinter GUI module. The availabl
 ```text
 macro_project/
 ├── README.md
+├── MANUAL_TESTING.md
+├── Screenshot 1.png (used in manual testing)
+├── Screenshot 2.png (used in manual testing)
+├── Screenshot 3.png (used in manual testing)
 ├── requirements.txt
 ├── data/
 │   ├── raw/

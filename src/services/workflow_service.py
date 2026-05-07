@@ -83,6 +83,10 @@ class WorkflowService:
         Train and save the classifier model using the indexed dataset.
         """
         print("[TRAIN_CLASSIFIER] Starting classifier training workflow")
+        
+        print("[TRAIN_CLASSIFIER] Preprocessing images and saving to data/processed/...")
+        self.preprocess_images()
+        
         df = self.load_dataframe()
         print(f"[TRAIN_CLASSIFIER] Loaded dataframe with {len(df)} samples")
         
