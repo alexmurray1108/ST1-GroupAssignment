@@ -20,13 +20,13 @@ The goal is to build an automated system for identifying aquatic macroinvertebra
 
 The codebase uses the following Python packages:
 
-- `numpy`
-- `pandas`
+- `numpy` 
+- `pandas` 
 - `opencv-python` (`cv2`)
 - `matplotlib`
 - `seaborn`
 - `scikit-learn`
-- `joblib`
+- `joblib` 
 
 ## Installation Instructions
 
@@ -102,6 +102,7 @@ Note: this codebase does not include a separate Tkinter GUI module. The availabl
 ```text
 macro_project/
 ├── README.md
+├── requirements.txt
 ├── data/
 │   ├── raw/
 │   │   ├── Asellus sp/
