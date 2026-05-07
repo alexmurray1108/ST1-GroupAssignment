@@ -51,7 +51,7 @@ The codebase uses the following Python packages:
 
 3. Install the dependencies:
    ```bash
-   pip install numpy pandas opencv-python matplotlib seaborn scikit-learn joblib
+   pip install -r requirements.txt
    ```
 
 4. Place the raw dataset inside `data/raw/`, keeping one folder per species.
