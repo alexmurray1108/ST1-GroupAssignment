@@ -32,7 +32,7 @@ The codebase uses the following Python packages:
 
 ### Prerequisites
 
-- Python 3.12 or older
+- Python 3.14 or Newer is recomended
 - `pip`
 
 ### Setup
