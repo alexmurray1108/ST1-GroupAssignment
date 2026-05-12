@@ -18,7 +18,7 @@ import joblib
 from config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, REPORT_OUTPUT_DIR, SUPPORTED_EXTENSIONS
 from services.dataset_indexer import DatasetIndexer
 from services.classifier_service import ClassifierService
-from services.eda_service import EDAService, save_sample_grid
+from services.eda_service import EDAService
 from services.Image_processor import ImagePreprocessor
 import numpy as np
 
@@ -50,9 +50,7 @@ class WorkflowService:
         """Generate and save outputs"""
         df = self.load_dataframe()
         eda = EDAService(df, EDA_OUTPUT_DIR)
-        eda.save_class_distribution()
-        eda.save_image_size_distribution()
-        save_sample_grid(df, EDA_OUTPUT_DIR / "sample_grid.png")
+        eda.generate_all_outputs()
         print("EDA outputs generated successfully.")
 
     def preprocess_images(self) -> tuple[str, str] | None:

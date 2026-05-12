@@ -23,19 +23,26 @@ class DatasetIndexer:
         self.data_dir = data_dir
     
     def build_dataframe(self) -> pd.DataFrame:
-        """Return a DataFrame with file path, label, width, height, channels"""
+        """Return a DataFrame with file path, label, width, height, channels, and quality metadata."""
         records = []
 
         for file_path in self.data_dir.rglob("*"):
-            if file_path.suffix.lower() not in SUPPORTED_EXTENSIONS:
+            file_extension = file_path.suffix.lower()
+            if file_extension not in SUPPORTED_EXTENSIONS:
                 continue
 
             image = cv2.imread(str(file_path))
-            if image is None:
-                continue
+            readable = image is not None
+            width = None
+            height = None
+            channels = None
+            aspect_ratio = None
 
-            height, width = image.shape[:2]
-            channels = image.shape[2] if len(image.shape) == 3 else 1
+            if readable:
+                height, width = image.shape[:2]
+                channels = image.shape[2] if len(image.shape) == 3 else 1
+                aspect_ratio = width / height if height else None
+
             label = file_path.parent.name
 
             records.append({
@@ -44,6 +51,9 @@ class DatasetIndexer:
                 "width": width,
                 "height": height,
                 "channels": channels,
+                "file_extension": file_extension,
+                "readable": readable,
+                "aspect_ratio": aspect_ratio,
             })
         return pd.DataFrame(records)
     

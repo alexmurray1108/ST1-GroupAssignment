@@ -1,0 +1,12 @@
+metric,value
+total_images,2665
+total_classes,17
+images_per_class,Asellus sp: 294; Baetidae sp: 109; Elmis sp: 45; Ephemerellidae: 68; Erpobdella sp: 107; Gammarus sp: 987; Hydropsychidae sp: 69; Leptophlebiidae sp: 9; Leuctra sp: 19; Limnius sp: 14; Lymnea sp: 33; Nemoura sp: 106; Oligochaeta sp: 134; Sericostomatidae sp: 151; Sialis sp: 19; Simuliidae sp: 374; Sphaerium sp: 127
+mean_width,599.27
+mean_height,389.98
+min_width,274
+max_width,600
+min_height,274
+max_height,600
+number_of_unreadable_files,0
+supported_file_types_found,.png
