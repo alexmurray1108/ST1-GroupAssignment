@@ -16,6 +16,8 @@ from pathlib import Path
 import joblib
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
@@ -110,6 +112,35 @@ class ClassifierService:
         print(f"[SAVE] Model saved successfully to {output_path}")
         
         return output_path
+    
+    """Write the clasification report and save to text file"""
+    def save_report(results: dict[str, object], output_dir: Path):
+        report_path = output_dir / "classification_report.txt"
+        report_path.write_text(results["report"], encoding="utf-8")
+    
+    def save_confusion_matrix_plot(
+            results: dict[str, object],
+            labels: list[str],
+            output_dir: Path,
+            ):
+        """Save confusion matrix heatmap Image"""
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(
+            results["confusion_matrix"],
+            annot=False,
+            cmap="Blues",
+            xticklabels=labels,
+            yticklabels=labels
+            )
+        plt.title("Confusion Matrix")
+        plt.xlabel("predicted")
+        plt.ylabel("Actual")
+        plt.tight_layout()
+        plt.savefig(output_dir / "confusion_matrix.png")
+        plt.close()
+        
+        
+
 
 
 """
