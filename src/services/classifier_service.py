@@ -41,7 +41,7 @@ class ClassifierService:
             random_state=42,
             n_jobs=-1
         )
-        print(f"[INIT] ClassifierService initialized successfully")
+        print(f"[INIT] ClassifierService initialized successfully\n\n")
 
     def prepare_features(self, dataframe: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
         """Convert indexed file paths into model features and labels."""
@@ -58,7 +58,7 @@ class ClassifierService:
         features_array = np.array(features)
         labels_array = np.array(labels)
         print(f"[PREPARE_FEATURES] Feature preparation completed")
-        print(f"[PREPARE_FEATURES] Features shape: {features_array.shape}, Labels shape: {labels_array.shape}")
+        print(f"[PREPARE_FEATURES] Features shape: {features_array.shape}, Labels shape: {labels_array.shape}\n\n")
         
         return features_array, labels_array
 
@@ -103,7 +103,7 @@ class ClassifierService:
         self.save_report(results, self.report_output_dir)
         self.save_confusion_matrix_plot(results, list(self.model.classes_), self.report_output_dir)
         
-        print(f"[TRAIN] Training workflow completed successfully")
+        print(f"[TRAIN] Training workflow completed successfully\n\n")
         return results
 
     def save_model(self, file_name: str = "macro_classifier.joblib") -> Path:
@@ -114,7 +114,7 @@ class ClassifierService:
         output_path = self.model_output_dir / file_name
         print(f"[SAVE] Saving model to {output_path}")
         joblib.dump(self.model, output_path)
-        print(f"[SAVE] Model saved successfully to {output_path}")
+        print(f"[SAVE] Model saved successfully to {output_path}\n\n")
         
         return output_path
     

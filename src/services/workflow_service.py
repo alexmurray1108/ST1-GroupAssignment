@@ -75,7 +75,7 @@ class WorkflowService:
         labels_path = processed_dir / "labels.npy"
         np.save(features_path, features)
         np.save(labels_path, np.array(labels))
-        print(f"[PREPROCESS] Saved {len(raw_files)} feature vectors to {processed_dir}")
+        print(f"[PREPROCESS] Saved {len(raw_files)} feature vectors to {processed_dir}\n\n")
         return str(features_path), str(labels_path)
 
     def train_classifier(self) -> str:
@@ -98,7 +98,7 @@ class WorkflowService:
         print(f"[TRAIN_CLASSIFIER] Model accuracy: {results['accuracy']:.4f}")
         
         model_path = service.save_model()
-        print(f"[TRAIN_CLASSIFIER] Classifier training completed")
+        print(f"[TRAIN_CLASSIFIER] Classifier training completed\n\n")
         return str(model_path)
 
     def predict_image(self, image_path: str) -> str:
@@ -116,7 +116,11 @@ class WorkflowService:
         model = joblib.load(model_path)
 
         features = preprocessor.transform(image_path)
-        prediction = model.predict([features])[0]
+        probabilities = model.predict_proba([features])[0]
+        predicted_index = int(np.argmax(probabilities))
+        prediction = model.classes_[predicted_index]
+        confidence = probabilities[predicted_index]
 
         print(f"Predicted class: {prediction}")
+        print(f"Prediction confidence: {confidence:.2%}")
         return str(prediction)
