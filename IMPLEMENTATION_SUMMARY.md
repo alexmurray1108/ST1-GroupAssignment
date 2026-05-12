@@ -19,13 +19,13 @@ The goal is to build an automated system for identifying aquatic macroinvertebra
 Our project was designed as a Image processing python application. We seperated Our stages into different modules and classes to ensure easier testing, maintenance and explanations. Our Stage One EDA generates charts and output summaries and Stage 2 trains the baseline classifier on preprocessed grayscale images. Our Stage 3 then allows a user to interact with the data through a menu-driven console.
 
 """Packages used"""
-joblib
-matplotlib
-numpy
-opencv-python
-pandas
-scikit-learn
-seaborn
+joblib - This is used by the classifier servcie to create the model
+matplotlib - This is used to create the plots like the confusion matrix
+numpy - Manages the neumeric arrays (features.npy and lables.npy)
+opencv-python - Loads, resizes and preprocesses the images
+pandas - Manupulates the data
+scikit-learn - Provides the classifer services for the accuracy score, classification report and confusion matrix
+seaborn - Styles and renders the visualisations
 
 """Key features Implemented"""
 - Dataset indexing from `data/raw/`
