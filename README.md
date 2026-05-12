@@ -130,14 +130,12 @@ macro_project/
     ├── main.py
     ├── models/
     │   └── records.py
-    ├── services/
-    │   ├── Image_processor.py
-    │   ├── classifier_service.py
-    │   ├── dataset_indexer.py
-    │   ├── eda_service.py
-    │   └── workflow_service.py
-    └── utils/
-        └── plotting.py
+    └── services/
+        ├── Image_processor.py
+        ├── classifier_service.py
+        ├── dataset_indexer.py
+        ├── eda_service.py
+        └── workflow_service.py
 ```
 
 ## Group Members
