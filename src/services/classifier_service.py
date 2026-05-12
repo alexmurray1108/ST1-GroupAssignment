@@ -27,11 +27,13 @@ from sklearn.model_selection import train_test_split
 class ClassifierService:
     """Train, evaluate, and persist the baseline classification model."""
 
-    def __init__(self, preprocessor, model_output_dir: Path) -> None:
+    def __init__(self, preprocessor, model_output_dir: Path, report_output_dir: Path) -> None:
         print(f"[INIT] Initializing ClassifierService")
         print(f"[INIT] Model output directory: {model_output_dir}")
+        print(f"[INIT] Report output directory: {report_output_dir}")
         self.preprocessor = preprocessor
         self.model_output_dir = Path(model_output_dir)
+        self.report_output_dir = Path(report_output_dir)
         
         print(f"[INIT] Creating RandomForestClassifier with 200 estimators")
         self.model = RandomForestClassifier(
@@ -87,7 +89,7 @@ class ClassifierService:
 
         accuracy = accuracy_score(y_test, predictions)
         report = classification_report(y_test, predictions)
-        conf_matrix = confusion_matrix(y_test, predictions)
+        conf_matrix = confusion_matrix(y_test, predictions, labels=self.model.classes_)
         
         print(f"[TRAIN] Model accuracy: {accuracy:.4f}")
         print(f"[TRAIN] Classification report:\n{report}")
@@ -97,6 +99,9 @@ class ClassifierService:
             "report": report,
             "confusion_matrix": conf_matrix,
         }
+
+        self.save_report(results, self.report_output_dir)
+        self.save_confusion_matrix_plot(results, list(self.model.classes_), self.report_output_dir)
         
         print(f"[TRAIN] Training workflow completed successfully")
         return results
@@ -113,17 +118,21 @@ class ClassifierService:
         
         return output_path
     
-    """Write the clasification report and save to text file"""
-    def save_report(results: dict[str, object], output_dir: Path):
+    def save_report(self, results: dict[str, object], output_dir: Path) -> Path:
+        """Write the classification report to a text file."""
+        output_dir.mkdir(parents=True, exist_ok=True)
         report_path = output_dir / "classification_report.txt"
         report_path.write_text(results["report"], encoding="utf-8")
+        return report_path
     
     def save_confusion_matrix_plot(
+            self,
             results: dict[str, object],
             labels: list[str],
             output_dir: Path,
-            ):
-        """Save confusion matrix heatmap Image"""
+            ) -> Path:
+        """Save the confusion matrix heatmap image."""
+        output_dir.mkdir(parents=True, exist_ok=True)
         plt.figure(figsize=(10, 8))
         sns.heatmap(
             results["confusion_matrix"],
@@ -136,8 +145,10 @@ class ClassifierService:
         plt.xlabel("predicted")
         plt.ylabel("Actual")
         plt.tight_layout()
-        plt.savefig(output_dir / "confusion_matrix.png")
+        plot_path = output_dir / "confusion_matrix.png"
+        plt.savefig(plot_path)
         plt.close()
+        return plot_path
         
         
 
@@ -158,8 +169,9 @@ if __name__ == "__main__":
     
     # Initialize the service
     output_dir = Path("outputs/models")
+    report_dir = Path("outputs/reports")
     preprocessor = MockPreprocessor()
-    service = ClassifierService(preprocessor, output_dir)
+    service = ClassifierService(preprocessor, output_dir, report_dir)
     
     # Create mock dataframe for testing
     print("\nCreating mock training data...")

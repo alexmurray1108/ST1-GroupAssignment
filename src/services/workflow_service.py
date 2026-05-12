@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 import joblib
 
-from config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, SUPPORTED_EXTENSIONS
+from config import EDA_OUTPUT_DIR, MODEL_OUTPUT_DIR, RAW_DATA_DIR, IMAGE_SIZE, REPORT_OUTPUT_DIR, SUPPORTED_EXTENSIONS
 from services.dataset_indexer import DatasetIndexer
 from services.classifier_service import ClassifierService
 from services.eda_service import EDAService, save_sample_grid
@@ -91,7 +91,7 @@ class WorkflowService:
         print(f"[TRAIN_CLASSIFIER] Loaded dataframe with {len(df)} samples")
         
         preprocessor = ImagePreprocessor(image_size=IMAGE_SIZE)
-        service = ClassifierService(preprocessor, MODEL_OUTPUT_DIR)
+        service = ClassifierService(preprocessor, MODEL_OUTPUT_DIR, REPORT_OUTPUT_DIR)
         
         print(f"[TRAIN_CLASSIFIER] Training classifier...")
         results = service.train(df)
